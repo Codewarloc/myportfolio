@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TypeAnimation } from 'react-type-animation';
-
-import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Monitor, Layout, Palette, Code2, Database, Terminal, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Github, Linkedin, Mail, Monitor, Palette, Code2, Database, Terminal, Globe } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import NavBar from './components/NavBar';
 import ProjectCard from './components/ProjectCard';
@@ -15,6 +14,7 @@ function App() {
   });
 
   const formRef = useRef<HTMLFormElement>(null);
+  // const formRef = useRef(null); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -63,65 +63,90 @@ function App() {
     { name: 'Responsive Design', icon: <Globe />, level: 90 }
   ];
 
+  const testimonials = [
+    {
+      name: 'John Doe',
+      feedback:
+        'Itam did an amazing job on our website! The design is stunning and the user experience is flawless.',
+      role: 'CEO, TechCorp',
+    },
+    {
+      name: 'Jane Smith',
+      feedback:
+        'Working with Itam was a pleasure. The project was delivered on time and exceeded our expectations.',
+      role: 'Product Manager, InnovateX',
+    },
+    {
+      name: 'Samuel Green',
+      feedback:
+        'Highly professional and creative! Will definitely work with Itam again for future projects.',
+      role: 'Founder, StartUp Hub',
+    },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setCurrentIndex((prev) => (prev + 1) % testimonials.length),
+      5000
+    );
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDark ? 'bg-gradient-to-br from-gray-900 to-black text-white' : 
-      'bg-gradient-to-br from-gray-50 to-white text-gray-900'
-    }`}>
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        isDark
+          ? 'bg-gradient-to-br from-gray-900 to-black text-white'
+          : 'bg-gradient-to-br from-gray-50 to-white text-gray-900'
+      }`}
+    >
       <NavBar isDark={isDark} />
-      
+
       {/* Hero Section */}
-      <section 
+      <section
         id="home"
         className="container mx-auto px-4 py-20 flex flex-col md:flex-row items-center justify-between min-h-screen"
       >
-        <motion.div 
-          className="md:w-1/2"
-          {...fadeIn}
-        >
-          {/* <h1 className="text-3xl font-bold mb-6 bg-clip-text  text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-            My Name Itam James and I'm a
-            Frontend Developer & UI/UX Designer
-          </h1> */}
-
-       <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-         My Name is Itam James and I'm a{' '}
-        <TypeAnimation
-         sequence={[
-        'Frontend Developer',
-         2000,
-        'UI/UX Designer',
-         2000,
-        ]}
-        wrapper="span"
-        speed={50}
-        repeat={Infinity}
-        />
-       </h1>
-          <p className={`text-xl mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+        <motion.div className="md:w-1/2" {...fadeIn}>
+          <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+            My Name is Itam James and I'm a{' '}
+            <TypeAnimation
+              sequence={['Frontend Developer', 2000, 'UI/UX Designer', 2000]}
+              wrapper="span"
+              speed={50}
+              repeat={Infinity}
+            />
+          </h1>
+          <p
+            className={`text-xl mb-8 ${
+              isDark ? 'text-gray-300' : 'text-gray-600'
+            }`}
+          >
             Creating beautiful, responsive, and user-friendly web experiences.
           </p>
           <div className="flex gap-4">
-            <motion.a 
-              href="https://github.com/Codewarloc" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <motion.a
+              href="https://github.com/Codewarloc"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 hover:text-blue-500 transition-colors"
               whileHover={{ scale: 1.1 }}
             >
               <Github size={24} />
             </motion.a>
-            <motion.a 
-              href="https://linkedin.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <motion.a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 hover:text-blue-500 transition-colors"
               whileHover={{ scale: 1.1 }}
             >
               <Linkedin size={24} />
             </motion.a>
-            <motion.a 
-              href="mailto:itamjames111@gmail.com" 
+            <motion.a
+              href="mailto:itamjames111@gmail.com"
               className="p-2 hover:text-blue-500 transition-colors"
               whileHover={{ scale: 1.1 }}
             >
@@ -129,23 +154,24 @@ function App() {
             </motion.a>
           </div>
         </motion.div>
-        <motion.div 
+        <motion.div
           className="md:w-1/2 mt-10 md:mt-0"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
           <div className="relative w-full h-[400px] bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-2xl transform rotate-3">
-            <div className={`absolute inset-0 ${isDark ? 'bg-black/20' : 'bg-white/20'} backdrop-blur-sm rounded-lg`}></div>
+            <div
+              className={`absolute inset-0 ${
+                isDark ? 'bg-black/20' : 'bg-white/20'
+              } backdrop-blur-sm rounded-lg`}
+            ></div>
           </div>
         </motion.div>
       </section>
 
       {/* Skills Section */}
-      <section 
-        id="skills"
-        className="container mx-auto px-4 py-20"
-      >
+      <section id="skills" className="container mx-auto px-4 py-20">
         <h2 className="text-3xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
           Skills & Expertise
         </h2>
@@ -162,17 +188,19 @@ function App() {
               viewport={{ once: true }}
             >
               <div className="flex items-center mb-4">
-                <div className="text-blue-500 mr-3">
-                  {skill.icon}
-                </div>
+                <div className="text-blue-500 mr-3">{skill.icon}</div>
                 <h3 className="text-xl font-semibold">{skill.name}</h3>
               </div>
-              <div className={`h-2 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
+              <div
+                className={`h-2 rounded-full ${
+                  isDark ? 'bg-gray-700' : 'bg-gray-200'
+                }`}
+              >
                 <motion.div
                   className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
                   initial={{ width: 0 }}
                   whileInView={{ width: `${skill.level}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
                   viewport={{ once: true }}
                 />
               </div>
@@ -190,14 +218,14 @@ function App() {
           Featured Projects
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ProjectCard 
+          <ProjectCard
             title="Incredible Bridges Website"
-            description="A detailed documentry website about bridges and types of bridges"
+            description="A detailed documentary website about bridges and types of bridges"
             image="https://images.pexels.com/photos/39284/macbook-apple-imac-computer-39284.jpeg"
             tags={['React', 'Node.js', 'MongoDB']}
             isDark={isDark}
           />
-          <ProjectCard 
+          <ProjectCard
             title="Task Management App"
             description="Task management application with real-time collaboration features"
             image="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg"
@@ -207,22 +235,65 @@ function App() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section id="testimonials" className="container mx-auto px-4 py-20">
+        <h2 className="text-3xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+          Testimonials
+        </h2>
+        <div className="relative max-w-2xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className={`p-8 rounded-lg shadow-lg ${
+                isDark ? 'bg-gray-800/50' : 'bg-white'
+              }`}
+            >
+              <p className="text-lg italic mb-4">
+                "{testimonials[currentIndex].feedback}"
+              </p>
+              <h4 className="font-semibold">
+                {testimonials[currentIndex].name}
+              </h4>
+              <span className="text-sm text-gray-500">
+                {testimonials[currentIndex].role}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+          <div className="flex justify-center gap-2 mt-4">
+            {testimonials.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-3 h-3 rounded-full ${
+                  idx === currentIndex
+                    ? 'bg-blue-500'
+                    : 'bg-gray-400 hover:bg-gray-500'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
-      <section 
-        id="contact"
-        className="container mx-auto px-4 py-20"
-      >
+      <section id="contact" className="container mx-auto px-4 py-20">
         <h2 className="text-3xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
           Get In Touch
         </h2>
         <div className="max-w-2xl mx-auto">
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-              <input 
-                type="text" 
+              <label htmlFor="name" className="block text-sm font-medium mb-2">
+                Name
+              </label>
+              <input
+                type="text"
                 name="user_name"
-                id="name" 
+                id="name"
                 required
                 className={`w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                   isDark ? 'bg-gray-800' : 'bg-gray-100'
@@ -230,11 +301,13 @@ function App() {
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-              <input 
-                type="email" 
+              <label htmlFor="email" className="block text-sm font-medium mb-2">
+                Email
+              </label>
+              <input
+                type="email"
                 name="user_email"
-                id="email" 
+                id="email"
                 required
                 className={`w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                   isDark ? 'bg-gray-800' : 'bg-gray-100'
@@ -242,19 +315,21 @@ function App() {
               />
             </div>
             <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-              <textarea 
-                id="message" 
+              <label htmlFor="message" className="block text-sm font-medium mb-2">
+                Message
+              </label>
+              <textarea
+                id="message"
                 name="message"
-                rows={4} 
+                rows={4}
                 required
                 className={`w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                   isDark ? 'bg-gray-800' : 'bg-gray-100'
                 }`}
               ></textarea>
             </div>
-            <motion.button 
-              type="submit" 
+            <motion.button
+              type="submit"
               disabled={isSubmitting}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 px-6 rounded-lg transition-shadow hover:shadow-lg disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
@@ -263,10 +338,14 @@ function App() {
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </motion.button>
             {submitStatus === 'success' && (
-              <p className="text-green-500 text-center">Message sent successfully!</p>
+              <p className="text-green-500 text-center">
+                Message sent successfully!
+              </p>
             )}
             {submitStatus === 'error' && (
-              <p className="text-red-500 text-center">Failed to send message. Please try again.</p>
+              <p className="text-red-500 text-center">
+                Failed to send message. Please try again.
+              </p>
             )}
           </form>
         </div>
@@ -281,7 +360,10 @@ function App() {
         </div>
       </footer>
 
-      <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
+      {/* Theme Toggle */}
+      <div className="fixed bottom-4 right-4">
+        <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
+      </div>
     </div>
   );
 }
